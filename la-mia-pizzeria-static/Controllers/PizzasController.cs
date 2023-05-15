@@ -92,5 +92,70 @@ namespace la_mia_pizzeria_static.Controllers
                 return Ok();
             }            
         }
+
+        [HttpPut("{id}")]
+        public IActionResult Edit(long id, [FromBody] Pizza data)
+        {
+            try
+            {
+                using (PizzaContext db = new PizzaContext())
+                {
+                    Pizza pizza = db.Pizza.Where(p => p.Id == id).Include(p => p.Category).Include(p => p.Ingredients).FirstOrDefault();
+
+                    if (pizza == null)
+                        return NotFound();
+
+                    pizza.Nome = data.Nome;
+                    pizza.Descrizione = data.Descrizione;
+                    pizza.Prezzo = data.Prezzo;
+                    pizza.Img = data.Img;
+
+                    pizza.CategoryId = data.CategoryId;
+
+                    pizza.Category = db.Categories.Where(category => category.Id == data.CategoryId).FirstOrDefault();
+
+                    pizza.Ingredients = new List<Ingredients>();
+
+                    if (data.Ingredients != null)
+                    {
+                        foreach (Ingredients ingredient in data.Ingredients)
+                        {
+                            Ingredients newIngredient = db.Ingredients.Where(ing => ing.Id == ingredient.Id).FirstOrDefault();
+                            pizza.Ingredients.Add(newIngredient);
+                        }
+                    }
+
+                    db.Pizza.Update(pizza);
+                    db.SaveChanges();
+
+                    return Ok();
+
+                }
+            }
+            catch
+            {
+                return UnprocessableEntity();
+            }
+
+        }
+
+        // Delete
+        [HttpDelete("{id}")]
+        public IActionResult Delete(long id)
+        {
+            using (PizzaContext db = new PizzaContext())
+            {
+                Pizza pizza = db.Pizza.Where(p => p.Id == id).FirstOrDefault();
+
+                if (pizza == null)
+                    return NotFound();
+
+                db.Pizza.Remove(pizza);
+                db.SaveChanges();
+
+                return Ok();
+
+            }
+        }
     }
 }
