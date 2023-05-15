@@ -1,0 +1,58 @@
+﻿@model PizzaFormModel
+
+<div class="container">
+    <form asp-controller="Pizza" asp-action="Update" method="post" asp-route-id="@Model.Pizza.Id">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <strong>Nome:</strong>
+            <input asp-for="Pizza.Nome" class="d-block w-100" />
+            <span asp-validation-for="Pizza.Nome" class="text-danger"></span>
+
+        </div>
+        <div class="mb-3">
+            <strong>Descrizione:</strong>
+            <input asp-for="Pizza.Descrizione" class="d-block w-100" />
+            <span asp-validation-for="Pizza.Descrizione" class="text-danger"></span>
+
+        </div>
+        <div class="mb-3">
+            <strong>Prezzo:</strong>
+            <input asp-for="Pizza.Prezzo" class="d-block w-100" />
+            <span asp-validation-for="Pizza.Prezzo" class="text-danger"></span>
+
+        </div>
+        <div class="mb-3">
+            <strong>Link Immagine:</strong>
+            <input asp-for="Pizza.Img" class="d-block w-100" />
+            <span asp-validation-for="Pizza.Img" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <select asp-for="Pizza.CategoryId" rows="10" class="d-block w-100">
+                <option value=""></option>
+                @foreach (Category category in Model.Categories)
+                {
+                    @if (Model.Pizza.CategoryId == category.Id)
+                    {
+                        <option value="@category.Id" selected>@category.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }                 
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <strong>Ingredients:</strong>
+            <select asp-for="SelectedIngredients"
+                    multiple="multiple"
+                    size="10"
+                    class="form-control mb-2 mr-sm-2 ml-sm-3 leftList"
+                    asp-items="@Model.Ingredients">
+            </select>
+        </div>
+        <div class="text-end">
+            <input type="submit" class="btn btn-small btn-info" value="Salva">
+        </div>
+    </form>
+</div>
